@@ -1,0 +1,18 @@
+# Ignore everything
+*
+
+# But not these files...
+
+# this file
+!.gitignore
+
+# my scripts
+!all_iters_pcoords_weights.py
+!bf_equiv.py
+!check_flux.py
+!fptd.py
+!iter_info.py
+!print_trajs_and_weights.py
+
+# the example data
+!example_data/example.h5
