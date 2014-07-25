@@ -2,7 +2,7 @@
 
 '''
 This script reads in an hdf5 file from a westpa simulation and produces a 
-histogram of bin weights for a specified iteration.
+list of pcoords and weights for a specified iteration.
 
 Written by Rory Donovan
 '''
