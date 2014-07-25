@@ -6,6 +6,9 @@
 # this file
 !.gitignore
 
+# the readme
+!README.md
+
 # my scripts
 !all_iters_pcoords_weights.py
 !bf_equiv.py
