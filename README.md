@@ -24,4 +24,4 @@ This script reads in an hdf5 file from a westpa simulation and produces a pair o
 
 ## test title
 
-did cloning on dvorak work? 
+did cloning on laptop work? 
