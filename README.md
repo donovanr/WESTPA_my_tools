@@ -22,6 +22,3 @@ This script reads in an hdf5 file from a westpa simulation and produces a first 
 
 This script reads in an hdf5 file from a westpa simulation and produces a pair of files: one with the weights of each trajectory, and one with a matrix of all the trajectories, each as a column vector.
 
-## test title
-
-did cloning on laptop work? 
