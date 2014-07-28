@@ -4,7 +4,7 @@
 
 This script reads in an hdf5 file from a westpa simulation and produces a text file with three columns: [iteration, pcood, weight].
 
-This can be a vary large text file.
+This can be a very large text file.
 
 ## iter_info.py
 
