@@ -6,8 +6,6 @@ first passage time distribution, given a target state and an iteration.
 
 It uses the w_trace tool provided in westpa to trace every segment remaining
 in the given iteration and find when it first entered the target.
-It currently assumes that the rajectory starts with a pcoord greater than
-the pcoord of the target.
 
 You will have to set the variable trace_path to be the path to
 westpa/bin/w_trace on your system.
@@ -20,21 +18,28 @@ import argparse
 
 parser = argparse.ArgumentParser(description='This script for extracting pcoords and weights from a WESTPA hdf5 file for a desired iteration.')
 parser.add_argument('-i','--iter', help='iteration number',required=True)
-parser.add_argument('-t','--target', help='target pcoord',required=True)
 parser.add_argument('-f','--file', help='Input file name',required=True)
+parser.add_argument('-t','--target', help='comma seperated boundaries for target state: [b1,b2]',required=True)
 args = parser.parse_args()
+
+#import pdb
+#pdb.set_trace()
+
 
 # import necessary libraries
 import h5py
 import numpy
 import os
 import subprocess
+from string import maketrans
 
 # read input args to variables
 f = h5py.File(args.file, "r")
 basename = os.path.splitext(args.file)[0]
 iternum = int(args.iter)
-target = float(args.target)
+target = args.target.translate(maketrans("",""),"[]{}() \t")
+target = numpy.asarray(target.split(","), dtype=numpy.float32)
+target = numpy.sort(target)
 
 # find number of segs in desired iteration
 summary = f['/summary']
@@ -72,13 +77,10 @@ for n in range(0,numsegs):
 
 # for each seg, find the iter at which it first reaches the target
 # return infinity if it never reaches the target
-#fpts = numpy.zeros(numsegs)
 fpts = []
 for n in range(0,numsegs):
-  fpt = next((i for i, v in enumerate(allsegtrajs[n]) if v <= target), float('inf'))
+  fpt = next((i for i, v in enumerate(allsegtrajs[n]) if target[0] <= v <= target[1]), float('inf'))
   fpts.append(fpt)
-  #fpt = next((i for i, v in enumerate(allsegtrajs[n]) if v <= target), float('inf'))
-  #fpts[n] = fpt
 fpts = numpy.array(fpts)
 
 # pair up the weights and first passage times in an array
