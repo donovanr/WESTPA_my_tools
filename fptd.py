@@ -20,6 +20,7 @@ parser = argparse.ArgumentParser(description='This script for extracting pcoords
 parser.add_argument('-i','--iter', help='iteration number',required=True)
 parser.add_argument('-f','--file', help='Input file name',required=True)
 parser.add_argument('-t','--target', help='comma seperated boundaries for target state: [b1,b2]',required=True)
+parser.add_argument('-d','--dimension', help='dimension of pcoord that target bin is on', required=True)
 args = parser.parse_args()
 
 #import pdb
@@ -40,6 +41,7 @@ iternum = int(args.iter)
 target = args.target.translate(maketrans("",""),"[]{}() \t")
 target = numpy.asarray(target.split(","), dtype=numpy.float32)
 target = numpy.sort(target)
+pcoordbindim = int(args.dimension)
 
 # find number of segs in desired iteration
 summary = f['/summary']
@@ -71,7 +73,7 @@ for n in range(0,numsegs):
   allsegfinalweights[n] = traj_info[iternum][2] # also grab the weight in the desired iter
   segtraj = []
   for i in range(0,iternum - 1): # -1 because v last iter has all zeros in pcoord spot for some reason
-    pcoord = traj_info[i][-1][0]
+    pcoord = traj_info[i][-1][pcoordbindim]
     segtraj.append(pcoord)
   allsegtrajs.append(segtraj)
 
@@ -86,14 +88,17 @@ fpts = numpy.array(fpts)
 # pair up the weights and first passage times in an array
 weighted_fptd = numpy.column_stack((fpts, allsegfinalweights))
 
+# generate (overly) descriptive file name
+fname = 'fpt_weights_' + basename + '_iter_' + str(iternum) + '_targ_' + 'dim_' + str(args.dimension) + '_' + str(target[0]) + '-' + str(target[1])
+
 # print out array to file
-fname = 'fpt_weights_' + basename + '_iter_' + str(iternum) + '_targ_' + str(int(target)) +  '.txt'
-numpy.savetxt(fname, weighted_fptd, header='                  fpts                  weights') 
+fname_all = fname + '.txt'
+numpy.savetxt(fname_all, weighted_fptd, header='                  fpts                  weights') 
 
 # print out a version without the infinities
 finite_weighted_fptd = weighted_fptd[~numpy.isinf(weighted_fptd).any(1)]
-fname = 'fpt_weights_' + basename + '_iter_' + str(iternum) + '_targ_' + str(int(target)) +  '_finite.txt'
-numpy.savetxt(fname, finite_weighted_fptd, header='                  fpts                  weights')
+fname_finite= fname + '_finite.txt'
+numpy.savetxt(fname_finite, finite_weighted_fptd, header='                  fpts                  weights')
 
 # remove all of the text files that w_trace generates
-subprocess.Popen('rm traj_*', shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+subprocess.Popen('rm traj_*_*_trace.txt', shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
