@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python
 
 '''
 This script reads in an hdf5 file from a westpa simulation and returns the 
